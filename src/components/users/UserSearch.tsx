@@ -6,9 +6,12 @@ import {
   useState,
 } from 'react';
 import GithubContext from '../../context/github/GithubContext';
+import AlertContext from '../../context/alert/AlertContext';
 
 const UserSearch = () => {
   const { users, fetchUsers, resetUsers } = useContext(GithubContext);
+
+  const { setAlert } = useContext(AlertContext);
   const [text, steText] = useState<string>('');
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -18,7 +21,7 @@ const UserSearch = () => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (text === '') {
-      alert('Please enter something');
+      setAlert('Please enter something', 'error');
     } else {
       fetchUsers(text);
       steText('');
