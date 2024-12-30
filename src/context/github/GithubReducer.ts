@@ -1,7 +1,8 @@
 import { GithubContextProps, User } from './GithubContext';
 
-type Action =
+export type Action =
   | { type: 'GET_USERS'; payload: User[] }
+  | { type: 'RESET_USERS' }
   | { type: 'SET_LOADING'; payload: boolean };
 
 const GITHUB_REDUCER = (state: GithubContextProps, action: Action) => {
@@ -11,6 +12,11 @@ const GITHUB_REDUCER = (state: GithubContextProps, action: Action) => {
         ...state,
         users: action.payload,
         loading: false,
+      };
+    case 'RESET_USERS':
+      return {
+        ...state,
+        users: [],
       };
     case 'SET_LOADING':
       return {

@@ -10,13 +10,15 @@ export interface User {
 export interface GithubContextProps {
   users: User[];
   loading: boolean;
-  fetchUsers: () => void;
+  fetchUsers: (text: string) => void;
+  resetUsers: () => void;
 }
 
 const initialState = {
   users: [],
   loading: false,
   fetchUsers: () => {},
+  resetUsers: () => {},
 };
 
 const GithubContext = createContext<GithubContextProps>(initialState);
@@ -30,23 +32,32 @@ const GITHUB_URL = import.meta.env.VITE_REACT_APP_GITHUB_URL;
 export const GithubProvider = ({ children }: GithubProviderProps) => {
   const [state, dispatch] = useReducer(GITHUB_REDUCER, initialState);
 
-  // Get initial users (testing purposes)
-  const fetchUsers = async () => {
+  const fetchUsers = async (text: string) => {
     setLoading();
-    const response = await fetch(`${GITHUB_URL}/users`);
-    const data = await response.json();
+    const params = new URLSearchParams({
+      q: text,
+    });
+    const response = await fetch(`${GITHUB_URL}/search/users?${params}`);
+    const { items } = await response.json();
     dispatch({
       type: 'GET_USERS',
-      payload: data,
+      payload: items,
     });
   };
+
+  const resetUsers = () => dispatch({ type: 'RESET_USERS' });
 
   // Set loading
   const setLoading = () => dispatch({ type: 'SET_LOADING', payload: true });
 
   return (
     <GithubContext.Provider
-      value={{ users: state.users, loading: state.loading, fetchUsers }}
+      value={{
+        users: state.users,
+        loading: state.loading,
+        fetchUsers,
+        resetUsers,
+      }}
     >
       {children}
     </GithubContext.Provider>
