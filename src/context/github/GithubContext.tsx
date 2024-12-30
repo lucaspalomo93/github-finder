@@ -23,6 +23,13 @@ export interface User {
 export interface Repo {
   name: string;
   archive_url: string;
+  id: string;
+  html_url: string;
+  forks: number;
+  watcher_count: number;
+  stargazers_count: number;
+  open_issues: number;
+  description: string;
 }
 
 export interface GithubContextProps {
